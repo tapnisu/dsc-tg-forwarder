@@ -4,6 +4,7 @@ use serenity::model::channel::Message;
 use serenity::model::prelude::{Embed, Guild};
 use serenity::prelude::*;
 use std::env;
+use teloxide::prelude::*;
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -54,35 +55,43 @@ fn format_embed(embed: Embed) -> String {
     res
 }
 
-struct Handler;
+struct Handler {
+    bot: Bot,
+}
 
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        print!(
-            "[{}]: {}\n{}",
-            if msg.is_private() {
-                msg.author.tag()
-            } else {
+        self.bot
+            .send_message(
+                1104237221.to_string(),
                 format!(
-                    "{} / #{} / {}",
-                    Guild::get(&ctx, msg.guild_id.unwrap()).await.unwrap().name,
-                    msg.channel_id
-                        .to_channel(&ctx.http)
-                        .await
-                        .unwrap()
-                        .guild()
-                        .unwrap()
-                        .name,
-                    msg.author.tag(),
-                )
-            },
-            msg.content_safe(ctx.cache),
-            msg.embeds
-                .into_iter()
-                .map(|e| format_embed(e))
-                .collect::<String>()
-        );
+                    "[{}]: {}\n{}",
+                    if msg.is_private() {
+                        msg.author.tag()
+                    } else {
+                        format!(
+                            "{} / #{} / {}",
+                            Guild::get(&ctx, msg.guild_id.unwrap()).await.unwrap().name,
+                            msg.channel_id
+                                .to_channel(&ctx.http)
+                                .await
+                                .unwrap()
+                                .guild()
+                                .unwrap()
+                                .name,
+                            msg.author.tag(),
+                        )
+                    },
+                    msg.content_safe(ctx.cache),
+                    msg.embeds
+                        .into_iter()
+                        .map(|e| format_embed(e))
+                        .collect::<String>()
+                ),
+            )
+            .await
+            .unwrap();
     }
 }
 
@@ -95,7 +104,9 @@ async fn main() {
         args.discord_token
             .unwrap_or_else(|| env::var("DISCORD_TOKEN").expect("Discord token wasn't supplied")),
     )
-    .event_handler(Handler)
+    .event_handler(Handler {
+        bot: Bot::from_env(),
+    })
     .await
     .expect("Error creating client");
 
