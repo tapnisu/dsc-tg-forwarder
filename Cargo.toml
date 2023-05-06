@@ -1,0 +1,13 @@
+[package]
+name = "dsc-tg-forwarder"
+version = "0.1.0"
+edition = "2021"
+readme = "README.md"
+authors = ["Alexiy Rybin <alexiy.rybin@gmail.com>"]
+repository = "https://github.com/tapnisu/dsc-tg-forwarder/"
+description = "Selfbot to send your incoming Discord messages to Telegram"
+license = "MIT"
+
+[dependencies]
+clap = "4.2.7"
+serenity = { git = "https://github.com/vars1ty/serenity", branch = "current" }
