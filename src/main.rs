@@ -12,6 +12,12 @@ struct Arguments {
     /// Discord token (if not used will be taken from DISCORD_TOKEN)
     #[clap(short, long)]
     discord_token: Option<String>,
+    /// Telegram token (if not used will be taken from TELEGRAM_TOKEN)
+    #[clap(short, long)]
+    telegram_token: Option<String>,
+    /// Id of telegram user/channel to send output to
+    #[clap(short, long)]
+    output_channel_id: Option<String>,
 }
 
 fn format_embed(embed: Embed) -> String {
@@ -57,6 +63,7 @@ fn format_embed(embed: Embed) -> String {
 
 struct Handler {
     bot: Bot,
+    output_channel_id: String,
 }
 
 #[async_trait]
@@ -64,7 +71,7 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         self.bot
             .send_message(
-                1104237221.to_string(),
+                self.output_channel_id.clone(),
                 format!(
                     "[{}]: {}\n{}",
                     if msg.is_private() {
@@ -105,7 +112,12 @@ async fn main() {
             .unwrap_or_else(|| env::var("DISCORD_TOKEN").expect("Discord token wasn't supplied")),
     )
     .event_handler(Handler {
-        bot: Bot::from_env(),
+        bot: Bot::new(args.telegram_token.unwrap_or_else(|| {
+            env::var("TELEGRAM_TOKEN").expect("Telegram token wasn't supplied")
+        })),
+        output_channel_id: args.output_channel_id.unwrap_or_else(|| {
+            env::var("OUTPUT_CHANNEL_ID").expect("Output channel wasn't supplied")
+        }),
     })
     .await
     .expect("Error creating client");
