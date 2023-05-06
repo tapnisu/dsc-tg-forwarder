@@ -10,4 +10,14 @@ license = "MIT"
 
 [dependencies]
 clap = "4.2.7"
-serenity = { git = "https://github.com/vars1ty/serenity", branch = "current" }
+serenity = { git = "https://github.com/vars1ty/serenity", branch = "current", default_features = false, features = [
+    "builder",
+    "cache",
+    "client",
+    "gateway",
+    "http",
+    "model",
+    "utils",
+    "rustls_backend",
+] }
+tokio = { version = "1.28.0", features = ["full"] }
