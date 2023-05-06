@@ -20,4 +20,4 @@ serenity = { git = "https://github.com/vars1ty/serenity", branch = "current", de
     "utils",
     "rustls_backend",
 ] }
-tokio = { version = "1.28.0", features = ["full"] }
+tokio = { version = "1.28.0", features = ["rt-multi-thread", "macros"] }
