@@ -18,23 +18,26 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        if msg.is_private() {
-            return println!("[{}]: {}", msg.author.tag(), msg.content_safe(&ctx.cache));
-        }
-
         println!(
-            "[{}/#{} {}]: {}",
-            Guild::get(&ctx, msg.guild_id.unwrap()).await.unwrap().name,
-            msg.channel_id
-                .to_channel(&ctx.http)
-                .await
-                .unwrap()
-                .guild()
-                .unwrap()
-                .name,
-            msg.author.tag(),
+            "[{}]: {}",
+            if msg.is_private() {
+                msg.author.tag()
+            } else {
+                format!(
+                    "{} / #{} / {}",
+                    Guild::get(&ctx, msg.guild_id.unwrap()).await.unwrap().name,
+                    msg.channel_id
+                        .to_channel(&ctx.http)
+                        .await
+                        .unwrap()
+                        .guild()
+                        .unwrap()
+                        .name,
+                    msg.author.tag(),
+                )
+            },
             msg.content_safe(ctx.cache)
-        )
+        );
     }
 }
 
