@@ -7,8 +7,12 @@ struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-    async fn message(&self, _ctx: Context, new_message: Message) {
-        println!("{}", new_message.content)
+    async fn message(&self, ctx: Context, message: Message) {
+        println!(
+            "[{}]: {}",
+            message.author.tag(),
+            message.content_safe(ctx.cache)
+        )
     }
 }
 
