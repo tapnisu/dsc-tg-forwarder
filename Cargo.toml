@@ -9,7 +9,7 @@ description = "Selfbot to send your incoming Discord messages to Telegram"
 license = "MIT"
 
 [dependencies]
-clap = "4.2.7"
+clap = { version = "4.2.7", features = ["derive"] }
 serenity = { git = "https://github.com/vars1ty/serenity", branch = "current", default_features = false, features = [
     "builder",
     "cache",
