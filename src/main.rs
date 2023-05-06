@@ -1,6 +1,7 @@
 use clap::Parser;
 use serenity::async_trait;
 use serenity::model::channel::Message;
+use serenity::model::prelude::Guild;
 use serenity::prelude::*;
 use std::env;
 
@@ -16,11 +17,23 @@ struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-    async fn message(&self, ctx: Context, message: Message) {
+    async fn message(&self, ctx: Context, msg: Message) {
+        if msg.is_private() {
+            return println!("[{}]: {}", msg.author.tag(), msg.content_safe(&ctx.cache));
+        }
+
         println!(
-            "[{}]: {}",
-            message.author.tag(),
-            message.content_safe(ctx.cache)
+            "[{}/#{} {}]: {}",
+            Guild::get(&ctx, msg.guild_id.unwrap()).await.unwrap().name,
+            msg.channel_id
+                .to_channel(&ctx.http)
+                .await
+                .unwrap()
+                .guild()
+                .unwrap()
+                .name,
+            msg.author.tag(),
+            msg.content_safe(ctx.cache)
         )
     }
 }
