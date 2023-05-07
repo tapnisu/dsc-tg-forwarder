@@ -12,8 +12,11 @@ pub struct Config {
 pub fn parse_config(path: String) -> Config {
     let path = Path::new(&path);
 
-    fs::create_dir_all(&path.parent().unwrap()).unwrap();
-    File::create(&path).unwrap();
+    if !path.exists() {
+        fs::create_dir_all(&path.parent().unwrap()).unwrap();
+        File::create(&path).unwrap();
+    }
+
     let yaml = fs::read_to_string(path).unwrap();
 
     serde_yaml::from_str(&yaml).unwrap()

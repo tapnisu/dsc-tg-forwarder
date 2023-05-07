@@ -118,29 +118,27 @@ async fn main() {
     )));
 
     // Login with a bot token from the environment
-    let mut client = Client::builder(
-        args.discord_token.unwrap_or(
-            config
-                .discord_token
-                .unwrap_or(env::var("DISCORD_TOKEN").expect("Discord token wasn't supplied")),
-        ),
-    )
-    .event_handler(Handler {
-        bot: Bot::new(
-            args.telegram_token.unwrap_or(
-                config
-                    .telegram_token
-                    .unwrap_or(env::var("TELEGRAM_TOKEN").expect("Telegram token wasn't supplied")),
+    let mut client =
+        Client::builder(args.discord_token.unwrap_or(
+            config.discord_token.unwrap_or_else(|| {
+                env::var("DISCORD_TOKEN").expect("Discord token wasn't supplied")
+            }),
+        ))
+        .event_handler(Handler {
+            bot: Bot::new(
+                args.telegram_token
+                    .unwrap_or(config.telegram_token.unwrap_or_else(|| {
+                        env::var("TELEGRAM_TOKEN").expect("Telegram token wasn't supplied")
+                    })),
             ),
-        ),
-        output_channel_id: args.output_channel_id.unwrap_or(
-            config
-                .output_channel_id
-                .unwrap_or(env::var("OUTPUT_CHANNEL_ID").expect("Output channel wasn't supplied")),
-        ),
-    })
-    .await
-    .expect("Error creating client");
+            output_channel_id: args.output_channel_id.unwrap_or(
+                config.output_channel_id.unwrap_or_else(|| {
+                    env::var("OUTPUT_CHANNEL_ID").expect("Output channel wasn't supplied")
+                }),
+            ),
+        })
+        .await
+        .expect("Error creating client");
 
     // start listening for events by starting a single shard
     if let Err(why) = client.start().await {
