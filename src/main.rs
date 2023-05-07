@@ -9,6 +9,7 @@ use serenity::model::prelude::{Embed, Guild};
 use serenity::prelude::*;
 use std::env;
 use teloxide::prelude::*;
+use teloxide::types::ParseMode;
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -73,13 +74,39 @@ struct Handler {
     output_channel_id: String,
 }
 
+fn escape_markdownv2(text: String) -> String {
+    text.chars()
+        .map(|x| match x {
+            '_' => "\\_".to_string(),
+            '*' => "\\*".to_string(),
+            '[' => "\\[".to_string(),
+            ']' => "\\]".to_string(),
+            '(' => "\\(".to_string(),
+            ')' => "\\)".to_string(),
+            '~' => "\\~".to_string(),
+            '`' => "\\`".to_string(),
+            '>' => "\\>".to_string(),
+            '#' => "\\#".to_string(),
+            '+' => "\\+".to_string(),
+            '-' => "\\-".to_string(),
+            '=' => "\\=".to_string(),
+            '|' => "\\|".to_string(),
+            '{' => "\\{".to_string(),
+            '}' => "\\}".to_string(),
+            '.' => "\\.".to_string(),
+            '!' => "\\!".to_string(),
+            _ => x.to_owned().to_string(),
+        })
+        .collect()
+}
+
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         self.bot
             .send_message(
                 self.output_channel_id.clone(),
-                format!(
+                escape_markdownv2(format!(
                     "[{}]: {}\n{}",
                     if msg.is_private() {
                         msg.author.tag()
@@ -102,8 +129,9 @@ impl EventHandler for Handler {
                         .into_iter()
                         .map(|e| format_embed(e))
                         .collect::<String>()
-                ),
+                )),
             )
+            .parse_mode(ParseMode::MarkdownV2)
             .await
             .unwrap();
     }
