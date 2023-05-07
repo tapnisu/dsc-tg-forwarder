@@ -2,6 +2,7 @@ mod config;
 
 use crate::config::parse_config;
 use clap::Parser;
+use home;
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::model::prelude::{Embed, Guild};
@@ -111,10 +112,10 @@ impl EventHandler for Handler {
 #[tokio::main]
 async fn main() {
     let args = Arguments::parse();
-    let config = parse_config(
-        args.config_path
-            .unwrap_or("~/.config/dsc-tg-forwarder/config.yml".to_string()),
-    );
+    let config = parse_config(args.config_path.unwrap_or(format!(
+        "{}/.config/dsc-tg-forwarder/config.yml",
+        home::home_dir().unwrap().display()
+    )));
 
     // Login with a bot token from the environment
     let mut client = Client::builder(
