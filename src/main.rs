@@ -85,7 +85,7 @@ impl EventHandler for Handler {
                         msg.author.tag()
                     } else {
                         format!(
-                            "{} / #{} / {}",
+                            "{} / {} / {}",
                             Guild::get(&ctx, msg.guild_id.unwrap()).await.unwrap().name,
                             msg.channel_id
                                 .to_channel(&ctx.http)
