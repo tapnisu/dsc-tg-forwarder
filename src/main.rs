@@ -1,3 +1,6 @@
+mod config;
+
+use crate::config::parse_config;
 use clap::Parser;
 use serenity::async_trait;
 use serenity::model::channel::Message;
@@ -18,6 +21,9 @@ struct Arguments {
     /// Id of telegram user/channel to send output to
     #[clap(short, long)]
     output_channel_id: Option<String>,
+    /// Path to configuration file (default is ~/.config/dsc-tg-forwarder/config.yml)
+    #[clap(short, long)]
+    config_path: Option<String>,
 }
 
 fn format_embed(embed: Embed) -> String {
@@ -105,19 +111,35 @@ impl EventHandler for Handler {
 #[tokio::main]
 async fn main() {
     let args = Arguments::parse();
+    let config = parse_config(
+        args.config_path
+            .unwrap_or("~/.config/dsc-tg-forwarder/config.yml".to_string()),
+    );
 
     // Login with a bot token from the environment
     let mut client = Client::builder(
-        args.discord_token
-            .unwrap_or_else(|| env::var("DISCORD_TOKEN").expect("Discord token wasn't supplied")),
+        args.discord_token.unwrap_or(
+            env::var("DISCORD_TOKEN")
+                .unwrap_or(config.discord_token.expect("Discord token wasn't supplied")),
+        ),
     )
     .event_handler(Handler {
-        bot: Bot::new(args.telegram_token.unwrap_or_else(|| {
-            env::var("TELEGRAM_TOKEN").expect("Telegram token wasn't supplied")
-        })),
-        output_channel_id: args.output_channel_id.unwrap_or_else(|| {
-            env::var("OUTPUT_CHANNEL_ID").expect("Output channel wasn't supplied")
-        }),
+        bot: Bot::new(
+            args.telegram_token.unwrap_or(
+                env::var("TELEGRAM_TOKEN").unwrap_or(
+                    config
+                        .telegram_token
+                        .expect("Telegram token wasn't supplied"),
+                ),
+            ),
+        ),
+        output_channel_id: args.output_channel_id.unwrap_or(
+            env::var("OUTPUT_CHANNEL_ID").unwrap_or(
+                config
+                    .output_channel_id
+                    .expect("Output channel wasn't supplied"),
+            ),
+        ),
     })
     .await
     .expect("Error creating client");

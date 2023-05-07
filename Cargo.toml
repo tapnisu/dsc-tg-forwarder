@@ -10,6 +10,8 @@ license = "MIT"
 
 [dependencies]
 clap = { version = "4.2.7", features = ["derive"] }
+serde = { version = "1.0.162", features = ["derive"] }
+serde_yaml = "0.9.21"
 serenity = { git = "https://github.com/vars1ty/serenity", branch = "current", default_features = false, features = [
     "builder",
     "cache",
