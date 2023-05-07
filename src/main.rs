@@ -119,26 +119,23 @@ async fn main() {
     // Login with a bot token from the environment
     let mut client = Client::builder(
         args.discord_token.unwrap_or(
-            env::var("DISCORD_TOKEN")
-                .unwrap_or(config.discord_token.expect("Discord token wasn't supplied")),
+            config
+                .discord_token
+                .unwrap_or(env::var("DISCORD_TOKEN").expect("Discord token wasn't supplied")),
         ),
     )
     .event_handler(Handler {
         bot: Bot::new(
             args.telegram_token.unwrap_or(
-                env::var("TELEGRAM_TOKEN").unwrap_or(
-                    config
-                        .telegram_token
-                        .expect("Telegram token wasn't supplied"),
-                ),
+                config
+                    .telegram_token
+                    .unwrap_or(env::var("TELEGRAM_TOKEN").expect("Telegram token wasn't supplied")),
             ),
         ),
         output_channel_id: args.output_channel_id.unwrap_or(
-            env::var("OUTPUT_CHANNEL_ID").unwrap_or(
-                config
-                    .output_channel_id
-                    .expect("Output channel wasn't supplied"),
-            ),
+            config
+                .output_channel_id
+                .unwrap_or(env::var("OUTPUT_CHANNEL_ID").expect("Output channel wasn't supplied")),
         ),
     })
     .await
