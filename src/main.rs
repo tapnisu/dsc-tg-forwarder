@@ -32,11 +32,27 @@ struct Arguments {
 struct Handler {
     bot: Bot,
     output_channel_id: String,
+
+    allowed_channels_ids: Vec<u64>,
+    muted_channels_ids: Vec<u64>,
+    allowed_users_ids: Vec<u64>,
+    muted_users_ids: Vec<u64>,
 }
 
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
+        if (!self.allowed_channels_ids.contains(&msg.channel_id.0)
+            && !self.allowed_channels_ids.is_empty())
+            || (self.muted_channels_ids.contains(&msg.channel_id.0)
+                && !self.muted_channels_ids.is_empty())
+            || (!self.allowed_users_ids.contains(&msg.author.id.0)
+                && !self.allowed_users_ids.is_empty())
+            || (self.muted_users_ids.contains(&msg.author.id.0) && !self.muted_users_ids.is_empty())
+        {
+            return;
+        }
+
         self.bot
             .send_message(
                 self.output_channel_id.clone(),
@@ -75,6 +91,10 @@ async fn main() {
                     env::var("OUTPUT_CHANNEL_ID").expect("Output channel wasn't supplied")
                 }),
             ),
+            allowed_channels_ids: config.allowed_channels_ids,
+            muted_channels_ids: config.muted_channels_ids,
+            allowed_users_ids: config.allowed_users_ids,
+            muted_users_ids: config.muted_users_ids,
         })
         .await
         .expect("Error creating client");
