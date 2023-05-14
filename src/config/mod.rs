@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::fs::{self, File};
+use std::io::Write;
 use std::path::Path;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -19,10 +20,13 @@ pub fn parse_config(path: String) -> Config {
 
     if !path.exists() {
         fs::create_dir_all(&path.parent().unwrap()).unwrap();
-        File::create(&path).unwrap();
+        File::create(&path)
+            .expect("Failed to create config file")
+            .write_all(include_str!("../../assets/config.yml").as_bytes())
+            .expect("Failed to write default config file");
     }
 
-    let yaml = fs::read_to_string(path).unwrap();
+    let yaml = fs::read_to_string(path).expect("Failed to read config");
 
-    serde_yaml::from_str(&yaml).unwrap()
+    serde_yaml::from_str(&yaml).expect("Failed to read config")
 }
