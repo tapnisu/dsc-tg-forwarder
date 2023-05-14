@@ -21,9 +21,9 @@ struct Arguments {
     /// Telegram token (if not used will be taken from TELEGRAM_TOKEN)
     #[clap(short, long)]
     telegram_token: Option<String>,
-    /// Id of telegram user/channel to send output to
+    /// Id of telegram user/group to send output to
     #[clap(short, long)]
-    output_channel_id: Option<String>,
+    output_chat_id: Option<String>,
     /// Path to configuration file (default is ~/.config/dsc-tg-forwarder/config.yml)
     #[clap(short, long)]
     config_path: Option<String>,
@@ -31,7 +31,7 @@ struct Arguments {
 
 struct Handler {
     bot: Bot,
-    output_channel_id: String,
+    output_chat_id: String,
 
     allowed_channels_ids: Vec<u64>,
     muted_channels_ids: Vec<u64>,
@@ -53,11 +53,12 @@ impl EventHandler for Handler {
             return;
         }
 
+        let res = format_message(ctx, msg).await;
+
+        println!("{}", res);
+
         self.bot
-            .send_message(
-                self.output_channel_id.clone(),
-                format_message(ctx, msg).await,
-            )
+            .send_message(self.output_chat_id.clone(), res)
             .parse_mode(ParseMode::MarkdownV2)
             .await
             .unwrap();
@@ -86,11 +87,11 @@ async fn main() {
                         env::var("TELEGRAM_TOKEN").expect("Telegram token wasn't supplied")
                     })),
             ),
-            output_channel_id: args.output_channel_id.unwrap_or(
-                config.output_channel_id.unwrap_or_else(|| {
-                    env::var("OUTPUT_CHANNEL_ID").expect("Output channel wasn't supplied")
-                }),
-            ),
+            output_chat_id: args
+                .output_chat_id
+                .unwrap_or(config.output_chat_id.unwrap_or_else(|| {
+                    env::var("OUTPUT_CHAT_ID").expect("Output chat id wasn't supplied")
+                })),
             allowed_channels_ids: config.allowed_channels_ids,
             muted_channels_ids: config.muted_channels_ids,
             allowed_users_ids: config.allowed_users_ids,

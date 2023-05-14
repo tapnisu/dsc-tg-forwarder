@@ -7,7 +7,7 @@ use std::path::Path;
 pub struct Config {
     pub discord_token: Option<String>,
     pub telegram_token: Option<String>,
-    pub output_channel_id: Option<String>,
+    pub output_chat_id: Option<String>,
 
     pub allowed_channels_ids: Vec<u64>,
     pub muted_channels_ids: Vec<u64>,
