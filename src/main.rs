@@ -53,12 +53,8 @@ impl EventHandler for Handler {
             return;
         }
 
-        let res = format_message(ctx, msg).await;
-
-        println!("{}", res);
-
         self.bot
-            .send_message(self.output_chat_id.clone(), res)
+            .send_message(self.output_chat_id.clone(), format_message(ctx, msg).await)
             .parse_mode(ParseMode::MarkdownV2)
             .await
             .unwrap();
