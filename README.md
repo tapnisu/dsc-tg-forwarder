@@ -33,7 +33,7 @@ cargo install --git https://github.com/tapnisu/dsc-tg-forwarder
 
 2. Input your Telegram bot token into TELEGRAM_TOKEN environment variable
 
-3. Input your Output channel id into OUTPUT_CHAT_ID environment variable
+3. Input your output channel id into OUTPUT_CHAT_ID environment variable
 
 4. Run `dsc-tg-forwarder`
 
