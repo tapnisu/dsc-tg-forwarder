@@ -3,7 +3,6 @@ mod utils;
 
 use crate::config::parse_config;
 use clap::Parser;
-use home;
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::prelude::*;

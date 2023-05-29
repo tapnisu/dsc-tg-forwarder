@@ -51,10 +51,7 @@ pub async fn format_message(ctx: Context, msg: Message) -> String {
             )
         },
         escape_markdownv2(msg.content_safe(ctx.cache)),
-        msg.embeds
-            .into_iter()
-            .map(|e| format_embed(e))
-            .collect::<String>()
+        msg.embeds.into_iter().map(format_embed).collect::<String>()
     )
 }
 
