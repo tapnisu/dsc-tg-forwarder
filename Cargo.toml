@@ -9,10 +9,10 @@ description = "Selfbot to send your incoming Discord messages to Telegram"
 license = "MIT"
 
 [dependencies]
-clap = { version = "4.2.7", features = ["derive"] }
-home = "0.5.5"
-serde = { version = "1.0.162", features = ["derive"] }
-serde_yaml = "0.9.21"
+clap = { version = "4.3", features = ["derive"] }
+home = "0"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
 serenity = { git = "https://github.com/vars1ty/serenity", branch = "current", default_features = false, features = [
     "builder",
     "cache",
@@ -23,5 +23,5 @@ serenity = { git = "https://github.com/vars1ty/serenity", branch = "current", de
     "utils",
     "rustls_backend",
 ] }
-teloxide = "0.12.2"
-tokio = { version = "1.28.0", features = ["rt-multi-thread", "macros"] }
+teloxide = "0.12"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
