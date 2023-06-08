@@ -1,6 +1,6 @@
 discord_token: discord-token
 telegram_token: telegram-token
-output_channel_id: telegram-id-to-output-messages
+output_chat_id: telegram-id-to-output-messages
 
 allowed_channels_ids:
 muted_channels_ids:
