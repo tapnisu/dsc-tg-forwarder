@@ -32,8 +32,12 @@ struct Handler {
     bot: Bot,
     output_chat_id: String,
 
+    allowed_guilds_ids: Vec<u64>,
+    muted_guilds_ids: Vec<u64>,
+
     allowed_channels_ids: Vec<u64>,
     muted_channels_ids: Vec<u64>,
+
     allowed_users_ids: Vec<u64>,
     muted_users_ids: Vec<u64>,
 }
@@ -41,8 +45,16 @@ struct Handler {
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        if (!self.allowed_channels_ids.contains(&msg.channel_id.0)
-            && !self.allowed_channels_ids.is_empty())
+        if (!self
+            .allowed_guilds_ids
+            .contains(&msg.guild_id.unwrap_or_default().0)
+            && !self.allowed_guilds_ids.is_empty())
+            || (self
+                .muted_guilds_ids
+                .contains(&msg.guild_id.unwrap_or_default().0)
+                && !self.muted_guilds_ids.is_empty())
+            || (!self.allowed_channels_ids.contains(&msg.channel_id.0)
+                && !self.allowed_channels_ids.is_empty())
             || (self.muted_channels_ids.contains(&msg.channel_id.0)
                 && !self.muted_channels_ids.is_empty())
             || (!self.allowed_users_ids.contains(&msg.author.id.0)
@@ -87,6 +99,8 @@ async fn main() {
                 .unwrap_or(config.output_chat_id.unwrap_or_else(|| {
                     env::var("OUTPUT_CHAT_ID").expect("Output chat id wasn't supplied")
                 })),
+            allowed_guilds_ids: config.allowed_guilds_ids,
+            muted_guilds_ids: config.muted_guilds_ids,
             allowed_channels_ids: config.allowed_channels_ids,
             muted_channels_ids: config.muted_channels_ids,
             allowed_users_ids: config.allowed_users_ids,
