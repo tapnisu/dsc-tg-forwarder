@@ -99,12 +99,12 @@ async fn main() {
                 .unwrap_or(config.output_chat_id.unwrap_or_else(|| {
                     env::var("OUTPUT_CHAT_ID").expect("Output chat id wasn't supplied")
                 })),
-            allowed_guilds_ids: config.allowed_guilds_ids,
-            muted_guilds_ids: config.muted_guilds_ids,
-            allowed_channels_ids: config.allowed_channels_ids,
-            muted_channels_ids: config.muted_channels_ids,
-            allowed_users_ids: config.allowed_users_ids,
-            muted_users_ids: config.muted_users_ids,
+            allowed_guilds_ids: config.allowed_guilds_ids.unwrap_or(vec![]),
+            muted_guilds_ids: config.muted_guilds_ids.unwrap_or(vec![]),
+            allowed_channels_ids: config.allowed_channels_ids.unwrap_or(vec![]),
+            muted_channels_ids: config.muted_channels_ids.unwrap_or(vec![]),
+            allowed_users_ids: config.allowed_users_ids.unwrap_or(vec![]),
+            muted_users_ids: config.muted_users_ids.unwrap_or(vec![]),
         })
         .await
         .expect("Error creating client");
