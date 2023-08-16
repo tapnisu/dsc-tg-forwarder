@@ -1,8 +1,10 @@
+mod cli;
 mod config;
 mod utils;
 
 use crate::config::parse_config;
 use clap::Parser;
+use cli::Cli;
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::prelude::*;
@@ -10,23 +12,6 @@ use std::env;
 use teloxide::prelude::*;
 use teloxide::types::ParseMode;
 use utils::format_message;
-
-#[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
-struct Arguments {
-    /// Discord token (if not used will be taken from DISCORD_TOKEN)
-    #[clap(short, long)]
-    discord_token: Option<String>,
-    /// Telegram token (if not used will be taken from TELEGRAM_TOKEN)
-    #[clap(short, long)]
-    telegram_token: Option<String>,
-    /// Id of telegram user/group to send output to
-    #[clap(short, long)]
-    output_chat_id: Option<String>,
-    /// Path to configuration file (default is ~/.config/dsc-tg-forwarder/config.yml)
-    #[clap(short, long)]
-    config_path: Option<String>,
-}
 
 struct Handler {
     bot: Bot,
@@ -74,7 +59,7 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    let args = Arguments::parse();
+    let args = Cli::parse();
     let config = parse_config(args.config_path.unwrap_or(format!(
         "{}/.config/dsc-tg-forwarder/config.yml",
         home::home_dir().unwrap().display()
