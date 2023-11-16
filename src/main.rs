@@ -56,7 +56,6 @@ async fn main() {
         Err(err) => Cli::command().error(ErrorKind::InvalidValue, err).exit(),
         Ok(mut client) => {
             // start listening for events by starting a single shard
-
             if let Err(err) = client.start().await {
                 let _ = Cli::command().error(ErrorKind::InvalidValue, err).print();
             }

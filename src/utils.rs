@@ -70,17 +70,13 @@ pub fn format_embed(embed: Embed) -> String {
         res += &format!("{}\n", escape_markdownv2(description));
     }
 
-    res += &embed
-        .fields
-        .iter()
-        .map(|f| {
-            format!(
-                "\n{}\n{}\n",
-                escape_markdownv2(f.name.clone()),
-                escape_markdownv2(f.value.clone())
-            )
-        })
-        .collect::<String>();
+    res += &embed.fields.iter().fold(String::new(), |acc, f| {
+        acc + &format!(
+            "\n{}\n{}\n",
+            escape_markdownv2(f.name.clone()),
+            escape_markdownv2(f.value.clone())
+        )
+    });
 
     if let Some(thumbnail) = embed.thumbnail {
         res += &format!("Thumbnail: {}\n", escape_markdownv2(thumbnail.url));
