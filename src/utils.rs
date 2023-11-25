@@ -58,51 +58,42 @@ pub async fn format_message(ctx: Context, msg: Message) -> String {
 }
 
 pub fn format_embed(embed: Embed) -> String {
-    let mut res = "Embed:\n".to_owned();
-
-    res.push_str(&embed.title.map_or("".to_string(), |title| {
-        format!(
-            "[{}]({})\n",
-            escape_markdownv2(&title),
-            embed.url.unwrap_or("".to_string())
-        )
-    }));
-
-    res.push_str(&embed.description.map_or("".to_string(), |description| {
-        format!("{}\n", escape_markdownv2(&description))
-    }));
-
-    res.push_str(&embed.fields.iter().fold(String::new(), |acc, f| {
-        acc + &format!(
-            "\n{}\n{}\n",
-            escape_markdownv2(&f.name.clone()),
-            escape_markdownv2(&f.value.clone())
-        )
-    }));
-
-    res.push_str(&embed.thumbnail.map_or("".to_string(), |thumbnail| {
-        format!("Thumbnail: {}\n", escape_markdownv2(&thumbnail.url))
-    }));
-
-    res.push_str(&embed.image.map_or("".to_string(), |image| {
-        format!("Image: {}\n", escape_markdownv2(&image.url))
-    }));
-
-    res.push_str(&embed.video.map_or("".to_string(), |video| {
-        format!("Video: {}\n", escape_markdownv2(&video.url))
-    }));
-
-    res.push_str(&embed.author.map_or("".to_string(), |author| {
-        format!("Author: {}\n", escape_markdownv2(&author.name))
-    }));
-
-    res.push_str(&embed.footer.map_or("".to_string(), |footer| {
-        format!("Footer: {}\n", escape_markdownv2(&footer.text))
-    }));
-
-    res.push_str(&embed.timestamp.map_or("".to_string(), |timestamp| {
-        format!("Timestamp: {}\n", escape_markdownv2(&timestamp))
-    }));
-
-    res
+    format!(
+        "Embed:\n{}{}{}{}{}{}{}{}{}",
+        embed.title.map_or("".to_string(), |title| {
+            format!(
+                "[{}]({})\n",
+                escape_markdownv2(&title),
+                embed.url.unwrap_or("".to_string())
+            )
+        }),
+        embed.description.map_or("\n".to_string(), |description| {
+            format!("{}\n", escape_markdownv2(&description))
+        }),
+        embed.fields.iter().fold(String::new(), |acc, f| {
+            acc + &format!(
+                "\n{}\n{}\n",
+                escape_markdownv2(&f.name.clone()),
+                escape_markdownv2(&f.value.clone())
+            )
+        }),
+        embed.thumbnail.map_or("\n".to_string(), |thumbnail| {
+            format!("Thumbnail: {}\n", escape_markdownv2(&thumbnail.url))
+        }),
+        embed.image.map_or("\n".to_string(), |image| {
+            format!("Image: {}\n", escape_markdownv2(&image.url))
+        }),
+        embed.video.map_or("".to_string(), |video| {
+            format!("Video: {}\n", escape_markdownv2(&video.url))
+        }),
+        embed.author.map_or("".to_string(), |author| {
+            format!("Author: {}\n", escape_markdownv2(&author.name))
+        }),
+        embed.footer.map_or("".to_string(), |footer| {
+            format!("Footer: {}\n", escape_markdownv2(&footer.text))
+        }),
+        embed.timestamp.map_or("".to_string(), |timestamp| {
+            format!("Timestamp: {}\n", escape_markdownv2(&timestamp))
+        })
+    )
 }
