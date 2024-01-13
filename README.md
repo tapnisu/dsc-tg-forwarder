@@ -13,9 +13,9 @@ Selfbot to send your incoming Discord messages to Telegram
 
 1. Run in your shell:
 
-```sh
-cargo install --git https://github.com/tapnisu/dsc-tg-forwarder
-```
+   ```sh
+   cargo install --git https://github.com/tapnisu/dsc-tg-forwarder
+   ```
 
 ## Usage
 
