@@ -49,6 +49,7 @@ async fn main() {
             muted_channels_ids: config.muted_channels_ids,
             allowed_users_ids: config.allowed_users_ids,
             muted_users_ids: config.muted_users_ids,
+            hide_usernames: config.hide_usernames,
         })
         .await;
 

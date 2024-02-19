@@ -10,3 +10,5 @@ muted_channels_ids: []
 
 allowed_users_ids: []
 muted_users_ids: []
+
+hide_usernames: false

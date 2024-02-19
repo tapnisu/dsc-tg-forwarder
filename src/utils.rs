@@ -29,7 +29,15 @@ pub fn escape_markdownv2(text: &str) -> String {
         .collect()
 }
 
-pub async fn format_message(ctx: Context, msg: Message) -> String {
+pub async fn format_message(ctx: Context, msg: Message, hide_username: bool) -> String {
+    if hide_username {
+        return format!(
+            "{}\n{}",
+            escape_markdownv2(&msg.content_safe(ctx.cache)),
+            msg.embeds.into_iter().map(format_embed).collect::<String>()
+        );
+    }
+
     let author_part = if msg.is_private() {
         escape_markdownv2(&msg.author.tag())
     } else {
