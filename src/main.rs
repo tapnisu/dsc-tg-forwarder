@@ -18,7 +18,7 @@ async fn main() {
         "{}/.config/dsc-tg-forwarder/config.yml",
         home::home_dir().unwrap().display()
     ));
-    let config = parse_config(config_path);
+    let config = parse_config(&config_path);
 
     let discord_token = args.discord_token.unwrap_or(
         config

@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::fs::{self, File};
 use std::io::Write;
 use std::path::Path;
@@ -11,7 +11,7 @@ fn default_false() -> bool {
     false
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Config {
     pub discord_token: Option<String>,
     pub telegram_token: Option<String>,
@@ -36,8 +36,8 @@ pub struct Config {
     pub hide_usernames: bool,
 }
 
-pub fn parse_config(path: String) -> Config {
-    let path = Path::new(&path);
+pub fn parse_config(path: &str) -> Config {
+    let path = Path::new(path);
 
     if !path.exists() {
         fs::create_dir_all(path.parent().unwrap()).unwrap();

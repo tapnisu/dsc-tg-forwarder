@@ -44,7 +44,10 @@ impl EventHandler for Handler {
         }
 
         self.bot
-            .send_message(self.output_chat_id.clone(), format_message(ctx, msg, self.hide_usernames).await)
+            .send_message(
+                self.output_chat_id.clone(),
+                format_message(&ctx, &msg, self.hide_usernames).await,
+            )
             .parse_mode(ParseMode::MarkdownV2)
             .await
             .unwrap();
