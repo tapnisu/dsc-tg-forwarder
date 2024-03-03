@@ -3,27 +3,11 @@ use serenity::{
     prelude::Context,
 };
 
-pub fn escape_markdownv2(text: &str) -> String {
+pub fn escape_markdown_v2(text: &str) -> String {
     text.chars()
         .map(|x| match x {
-            '_' => "\\_".to_string(),
-            '*' => "\\*".to_string(),
-            '[' => "\\[".to_string(),
-            ']' => "\\]".to_string(),
-            '(' => "\\(".to_string(),
-            ')' => "\\)".to_string(),
-            '~' => "\\~".to_string(),
-            '`' => "\\`".to_string(),
-            '>' => "\\>".to_string(),
-            '#' => "\\#".to_string(),
-            '+' => "\\+".to_string(),
-            '-' => "\\-".to_string(),
-            '=' => "\\=".to_string(),
-            '|' => "\\|".to_string(),
-            '{' => "\\{".to_string(),
-            '}' => "\\}".to_string(),
-            '.' => "\\.".to_string(),
-            '!' => "\\!".to_string(),
+            '_' | '*' | '[' | ']' | '(' | ')' | '~' | '`' | '>' | '#' | '+' | '-' | '=' | '|'
+            | '{' | '}' | '.' | '!' => format!("\\{x}"),
             _ => x.to_owned().to_string(),
         })
         .collect()
@@ -32,7 +16,7 @@ pub fn escape_markdownv2(text: &str) -> String {
 pub async fn format_message(ctx: &Context, msg: &Message, hide_username: bool) -> String {
     let message_content = format!(
         "{}\n{}",
-        escape_markdownv2(&msg.content_safe(ctx.to_owned().cache)),
+        escape_markdown_v2(&msg.content_safe(ctx.to_owned().cache)),
         msg.embeds.iter().map(format_embed).collect::<String>()
     );
 
@@ -41,12 +25,12 @@ pub async fn format_message(ctx: &Context, msg: &Message, hide_username: bool) -
     }
 
     let author_part = if msg.is_private() {
-        escape_markdownv2(&msg.author.tag())
+        escape_markdown_v2(&msg.author.tag())
     } else {
         format!(
             "{} / {} / {}",
-            escape_markdownv2(&Guild::get(&ctx, msg.guild_id.unwrap()).await.unwrap().name),
-            escape_markdownv2(
+            escape_markdown_v2(&Guild::get(&ctx, msg.guild_id.unwrap()).await.unwrap().name),
+            escape_markdown_v2(
                 &msg.channel_id
                     .to_channel(&ctx.http)
                     .await
@@ -55,7 +39,7 @@ pub async fn format_message(ctx: &Context, msg: &Message, hide_username: bool) -
                     .unwrap()
                     .name
             ),
-            escape_markdownv2(&msg.author.tag()),
+            escape_markdown_v2(&msg.author.tag()),
         )
     };
 
@@ -66,7 +50,7 @@ pub fn format_embed(embed: &Embed) -> String {
     let title = embed.title.to_owned().map_or("".to_string(), |title| {
         format!(
             "[{}]({})\n",
-            escape_markdownv2(&title),
+            escape_markdown_v2(&title),
             embed.url.to_owned().unwrap_or("".to_string())
         )
     });
@@ -75,14 +59,14 @@ pub fn format_embed(embed: &Embed) -> String {
         .description
         .to_owned()
         .map_or("\n".to_string(), |description| {
-            format!("{}\n", escape_markdownv2(&description))
+            format!("{}\n", escape_markdown_v2(&description))
         });
 
     let fields = embed.fields.iter().fold(String::new(), |acc, f| {
         acc + &format!(
             "\n{}\n{}\n",
-            escape_markdownv2(&f.name.clone()),
-            escape_markdownv2(&f.value.clone())
+            escape_markdown_v2(&f.name.clone()),
+            escape_markdown_v2(&f.value.clone())
         )
     });
 
@@ -90,30 +74,30 @@ pub fn format_embed(embed: &Embed) -> String {
         .thumbnail
         .to_owned()
         .map_or("\n".to_string(), |thumbnail| {
-            format!("Thumbnail: {}\n", escape_markdownv2(&thumbnail.url))
+            format!("Thumbnail: {}\n", escape_markdown_v2(&thumbnail.url))
         });
 
     let image = embed.image.to_owned().map_or("\n".to_string(), |image| {
-        format!("Image: {}\n", escape_markdownv2(&image.url))
+        format!("Image: {}\n", escape_markdown_v2(&image.url))
     });
 
     let video = embed.video.to_owned().map_or("".to_string(), |video| {
-        format!("Video: {}\n", escape_markdownv2(&video.url))
+        format!("Video: {}\n", escape_markdown_v2(&video.url))
     });
 
     let author = embed.author.to_owned().map_or("".to_string(), |author| {
-        format!("Author: {}\n", escape_markdownv2(&author.name))
+        format!("Author: {}\n", escape_markdown_v2(&author.name))
     });
 
     let footer = embed.footer.to_owned().map_or("".to_string(), |footer| {
-        format!("Footer: {}\n", escape_markdownv2(&footer.text))
+        format!("Footer: {}\n", escape_markdown_v2(&footer.text))
     });
 
     let timestamp = embed
         .timestamp
         .to_owned()
         .map_or("".to_string(), |timestamp| {
-            format!("Timestamp: {}\n", escape_markdownv2(&timestamp))
+            format!("Timestamp: {}\n", escape_markdown_v2(&timestamp))
         });
 
     format!(
