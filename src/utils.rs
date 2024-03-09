@@ -60,7 +60,7 @@ pub fn format_embed(embed: &Embed) -> String {
         format!(
             "[{}]({})\n",
             title.escape_markdown_v2(),
-            embed.url.to_owned().unwrap_or("".to_string())
+            embed.url.to_owned().unwrap_or_else(|| "".to_string())
         )
     });
 
