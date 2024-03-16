@@ -3,7 +3,16 @@ use serenity::{
     prelude::Context,
 };
 
-trait EscapeMarkdownV2 {
+pub trait EscapeMarkdownV2 {
+    /// Escapes Telegrams Markdown V2 characters
+    ///
+    /// ```
+    /// use dsc_tg_forwarder::EscapeMarkdownV2;
+    ///
+    /// let result = "*Hello world!*".to_owned().escape_markdown_v2();
+    ///
+    /// assert_eq!(result, "\\*Hello world\\!\\*".to_owned());
+    /// ```
     fn escape_markdown_v2(&self) -> String;
 }
 

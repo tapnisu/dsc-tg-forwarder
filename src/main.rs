@@ -1,12 +1,5 @@
-mod cli;
-mod config;
-mod handler;
-mod utils;
-
 use clap::{error::ErrorKind, CommandFactory, Parser};
-use cli::Cli;
-use config::parse_config;
-use handler::Handler;
+use dsc_tg_forwarder::{cli::Cli, config::parse_config, handler::Handler};
 use serenity::prelude::*;
 use std::env;
 use teloxide::prelude::*;
