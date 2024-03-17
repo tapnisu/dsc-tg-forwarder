@@ -21,10 +21,9 @@ pub struct Handler {
     pub hide_usernames: bool,
 }
 
-#[async_trait]
-impl EventHandler for Handler {
-    async fn message(&self, ctx: Context, msg: Message) {
-        if (!self
+impl Handler {
+    fn check_filters(&self, msg: &Message) -> bool {
+        (!self
             .allowed_guilds_ids
             .contains(&msg.guild_id.unwrap_or_default().0)
             && !self.allowed_guilds_ids.is_empty())
@@ -39,7 +38,13 @@ impl EventHandler for Handler {
             || (!self.allowed_users_ids.contains(&msg.author.id.0)
                 && !self.allowed_users_ids.is_empty())
             || (self.muted_users_ids.contains(&msg.author.id.0) && !self.muted_users_ids.is_empty())
-        {
+    }
+}
+
+#[async_trait]
+impl EventHandler for Handler {
+    async fn message(&self, ctx: Context, msg: Message) {
+        if self.check_filters(&msg) {
             return;
         }
 
