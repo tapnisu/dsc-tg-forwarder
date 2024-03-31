@@ -21,7 +21,7 @@ Selfbot to send your incoming Discord messages to Telegram
 
 ### Using config
 
-1. Run `dsc-tg-forwarder`, which will generate default config at [~/.config/dsc-tg-forwarder/config.yml](assets/config.yml)
+1. Run `dsc-tg-forwarder`, which will generate default config at `~/.config/dsc-tg-forwarder/config.yml`
 
 2. Config it
 
@@ -37,7 +37,7 @@ Selfbot to send your incoming Discord messages to Telegram
 
 4. Run `dsc-tg-forwarder`
 
-### Using cli
+### Using CLI
 
 Just run this in your shell:
 

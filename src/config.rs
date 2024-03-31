@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::fs::{self, File};
 use std::io::Write;
 use std::path::Path;
@@ -11,7 +11,7 @@ fn default_false() -> bool {
     false
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub discord_token: Option<String>,
     pub telegram_token: Option<String>,
@@ -40,10 +40,28 @@ pub fn parse_config(path: &str) -> Config {
     let path = Path::new(path);
 
     if !path.exists() {
+        let js = Config {
+            discord_token: Some("discord-token".to_owned()),
+            telegram_token: Some("telegram-token".to_owned()),
+            output_chat_id: Some("telegram-chat-id-to-output-messages".to_owned()),
+
+            allowed_guilds_ids: vec![],
+            muted_guilds_ids: vec![],
+
+            allowed_channels_ids: vec![],
+            muted_channels_ids: vec![],
+
+            allowed_users_ids: vec![],
+            muted_users_ids: vec![],
+
+            hide_usernames: true,
+        };
+        let yaml = serde_yaml::to_string(&js).unwrap();
+
         fs::create_dir_all(path.parent().unwrap()).unwrap();
         File::create(path)
             .expect("Failed to create config file")
-            .write_all(include_str!("../assets/config.yml").as_bytes())
+            .write_all(yaml.as_bytes())
             .expect("Failed to write default config file");
     }
 
