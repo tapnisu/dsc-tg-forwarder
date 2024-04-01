@@ -9,7 +9,7 @@ pub struct Cli {
     /// Telegram token (if not used will be taken from TELEGRAM_TOKEN)
     #[clap(short, long)]
     pub telegram_token: Option<String>,
-    /// Id of telegram user/group to send output to
+    /// ID of telegram user/group to send output to
     #[clap(short, long)]
     pub output_chat_id: Option<String>,
     /// Path to configuration file (default is ~/.config/dsc-tg-forwarder/config.yml)
