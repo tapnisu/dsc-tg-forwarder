@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs::{self, File};
-use std::io::Write;
-use std::path::Path;
+use std::io::{self, Write};
+use std::path::PathBuf;
 
 fn empty_ids_vec() -> Vec<u64> {
     vec![]
@@ -36,9 +36,7 @@ pub struct Config {
     pub hide_usernames: bool,
 }
 
-pub fn parse_config(path: &str) -> Config {
-    let path = Path::new(path);
-
+pub fn parse_config(path: &PathBuf) -> anyhow::Result<Config> {
     if !path.exists() {
         let js = Config {
             discord_token: Some("discord-token".to_owned()),
@@ -58,14 +56,17 @@ pub fn parse_config(path: &str) -> Config {
         };
         let yaml = serde_yaml::to_string(&js).unwrap();
 
-        fs::create_dir_all(path.parent().unwrap()).unwrap();
-        File::create(path)
-            .expect("Failed to create config file")
-            .write_all(yaml.as_bytes())
-            .expect("Failed to write default config file");
+        let parent = path.parent().ok_or(io::Error::new(
+            io::ErrorKind::Other,
+            "Parent directory not found",
+        ))?;
+        fs::create_dir_all(parent)?;
+        File::create(path)?.write_all(yaml.as_bytes())?;
     }
 
-    let yaml = fs::read_to_string(path).expect("Failed to read config");
+    let yaml = fs::read_to_string(path)?;
 
-    serde_yaml::from_str(&yaml).expect("Failed to read config")
+    let config = serde_yaml::from_str(&yaml)?;
+
+    Ok(config)
 }

@@ -6,7 +6,7 @@ use teloxide::prelude::*;
 use teloxide::types::ParseMode;
 
 pub struct Handler {
-    pub bot: Bot,
+    pub sender_bot: Bot,
     pub output_chat_id: String,
 
     pub allowed_guilds_ids: Vec<u64>,
@@ -48,7 +48,7 @@ impl EventHandler for Handler {
             return;
         }
 
-        self.bot
+        self.sender_bot
             .send_message(
                 self.output_chat_id.to_owned(),
                 format_message(&ctx, &msg, self.hide_usernames).await,

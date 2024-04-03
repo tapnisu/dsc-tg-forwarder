@@ -13,30 +13,52 @@ async fn main() {
             home::home_dir().unwrap().display()
         )
     });
-    let config = parse_config(&config_path);
+    let config = parse_config(&config_path.into())
+        .unwrap_or_else(|err| Cli::command().error(ErrorKind::InvalidValue, err).exit());
 
-    let discord_token = args.discord_token.unwrap_or_else(|| {
-        config
-            .discord_token
-            .unwrap_or_else(|| env::var("DISCORD_TOKEN").expect("Discord token wasn't supplied"))
-    });
+    let discord_token = match (
+        args.discord_token,
+        config.discord_token,
+        env::var("DISCORD_TOKEN"),
+    ) {
+        (Some(discord_token), _, _) => discord_token,
+        (_, Some(discord_token), _) => discord_token,
+        (_, _, Ok(discord_token)) => discord_token,
+        (None, None, Err(_)) => Cli::command()
+            .error(ErrorKind::InvalidValue, "Discord token wasn't supplied")
+            .exit(),
+    };
 
-    let telegram_token = args.telegram_token.unwrap_or_else(|| {
-        config
-            .telegram_token
-            .unwrap_or_else(|| env::var("TELEGRAM_TOKEN").expect("Telegram token wasn't supplied"))
-    });
+    let telegram_token = match (
+        args.telegram_token,
+        config.telegram_token,
+        env::var("TELEGRAM_TOKEN"),
+    ) {
+        (Some(telegram_token), _, _) => telegram_token,
+        (_, Some(telegram_token), _) => telegram_token,
+        (_, _, Ok(telegram_token)) => telegram_token,
+        (None, None, Err(_)) => Cli::command()
+            .error(ErrorKind::InvalidValue, "Telegram token wasn't supplied")
+            .exit(),
+    };
 
-    let output_chat_id = args.output_chat_id.unwrap_or_else(|| {
-        config
-            .output_chat_id
-            .unwrap_or_else(|| env::var("OUTPUT_CHAT_ID").expect("Output chat id wasn't supplied"))
-    });
+    let output_chat_id = match (
+        args.output_chat_id,
+        config.output_chat_id,
+        env::var("OUTPUT_CHAT_ID"),
+    ) {
+        (Some(output_chat_id), _, _) => output_chat_id,
+        (_, Some(output_chat_id), _) => output_chat_id,
+        (_, _, Ok(output_chat_id)) => output_chat_id,
+        (None, None, Err(_)) => Cli::command()
+            .error(ErrorKind::InvalidValue, "Output chat id wasn't supplied")
+            .exit(),
+    };
 
     // Login with a bot token from the environment
     let client = Client::builder(discord_token)
         .event_handler(Handler {
-            bot: Bot::new(telegram_token),
+            sender_bot: Bot::new(telegram_token),
             output_chat_id,
             allowed_guilds_ids: config.allowed_guilds_ids,
             muted_guilds_ids: config.muted_guilds_ids,
