@@ -7,6 +7,8 @@ use teloxide::prelude::*;
 #[tokio::main]
 async fn main() {
     let args = Cli::parse();
+    let mut cmd = Cli::command();
+
     let config_path = args.config_path.unwrap_or_else(|| {
         format!(
             "{}/.config/dsc-tg-forwarder/config.yml",
@@ -14,7 +16,7 @@ async fn main() {
         )
     });
     let config = parse_config(&config_path.into())
-        .unwrap_or_else(|err| Cli::command().error(ErrorKind::InvalidValue, err).exit());
+        .unwrap_or_else(|err| cmd.error(ErrorKind::InvalidValue, err).exit());
 
     let discord_token = match (
         args.discord_token,
@@ -24,7 +26,7 @@ async fn main() {
         (Some(discord_token), _, _) => discord_token,
         (_, Some(discord_token), _) => discord_token,
         (_, _, Ok(discord_token)) => discord_token,
-        (None, None, Err(_)) => Cli::command()
+        (None, None, Err(_)) => cmd
             .error(ErrorKind::InvalidValue, "Discord token wasn't supplied")
             .exit(),
     };
@@ -37,7 +39,7 @@ async fn main() {
         (Some(telegram_token), _, _) => telegram_token,
         (_, Some(telegram_token), _) => telegram_token,
         (_, _, Ok(telegram_token)) => telegram_token,
-        (None, None, Err(_)) => Cli::command()
+        (None, None, Err(_)) => cmd
             .error(ErrorKind::InvalidValue, "Telegram token wasn't supplied")
             .exit(),
     };
@@ -50,7 +52,7 @@ async fn main() {
         (Some(output_chat_id), _, _) => output_chat_id,
         (_, Some(output_chat_id), _) => output_chat_id,
         (_, _, Ok(output_chat_id)) => output_chat_id,
-        (None, None, Err(_)) => Cli::command()
+        (None, None, Err(_)) => cmd
             .error(ErrorKind::InvalidValue, "Output chat id wasn't supplied")
             .exit(),
     };
@@ -71,12 +73,12 @@ async fn main() {
         .await;
 
     match client {
-        Err(err) => Cli::command().error(ErrorKind::InvalidValue, err).exit(),
         Ok(mut client) => {
             // start listening for events by starting a single shard
             if let Err(err) = client.start().await {
-                let _ = Cli::command().error(ErrorKind::InvalidValue, err).print();
+                let _ = cmd.error(ErrorKind::InvalidValue, err).print();
             }
         }
+        Err(err) => cmd.error(ErrorKind::InvalidValue, err).exit(),
     }
 }

@@ -3,36 +3,28 @@ use std::fs::{self, File};
 use std::io::{self, Write};
 use std::path::PathBuf;
 
-fn empty_ids_vec() -> Vec<u64> {
-    vec![]
-}
-
-fn default_false() -> bool {
-    false
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub discord_token: Option<String>,
     pub telegram_token: Option<String>,
     pub output_chat_id: Option<String>,
 
-    #[serde(default = "empty_ids_vec")]
+    #[serde(default)]
     pub allowed_guilds_ids: Vec<u64>,
-    #[serde(default = "empty_ids_vec")]
+    #[serde(default)]
     pub muted_guilds_ids: Vec<u64>,
 
-    #[serde(default = "empty_ids_vec")]
+    #[serde(default)]
     pub allowed_channels_ids: Vec<u64>,
-    #[serde(default = "empty_ids_vec")]
+    #[serde(default)]
     pub muted_channels_ids: Vec<u64>,
 
-    #[serde(default = "empty_ids_vec")]
+    #[serde(default)]
     pub allowed_users_ids: Vec<u64>,
-    #[serde(default = "empty_ids_vec")]
+    #[serde(default)]
     pub muted_users_ids: Vec<u64>,
 
-    #[serde(default = "default_false")]
+    #[serde(default)]
     pub hide_usernames: bool,
 }
 

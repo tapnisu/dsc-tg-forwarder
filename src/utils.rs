@@ -76,7 +76,7 @@ pub fn format_embed(embed: &Embed) -> String {
     let description = embed
         .description
         .to_owned()
-        .map_or("\n".to_string(), |description| {
+        .map_or("".to_string(), |description| {
             format!("{}\n", description.escape_markdown_v2())
         });
 
@@ -91,11 +91,11 @@ pub fn format_embed(embed: &Embed) -> String {
     let thumbnail = embed
         .thumbnail
         .to_owned()
-        .map_or("\n".to_string(), |thumbnail| {
+        .map_or("".to_string(), |thumbnail| {
             format!("Thumbnail: {}\n", &thumbnail.url.escape_markdown_v2())
         });
 
-    let image = embed.image.to_owned().map_or("\n".to_string(), |image| {
+    let image = embed.image.to_owned().map_or("".to_string(), |image| {
         format!("Image: {}\n", image.url.escape_markdown_v2())
     });
 
