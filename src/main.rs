@@ -74,6 +74,6 @@ async fn main() {
         .unwrap_or_else(|err| cmd.error(ErrorKind::InvalidValue, err).exit());
 
     if let Err(err) = client.start().await {
-        let _ = cmd.error(ErrorKind::InvalidValue, err).print();
+        cmd.error(ErrorKind::InvalidValue, err).exit()
     }
 }
