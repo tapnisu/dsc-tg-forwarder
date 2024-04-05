@@ -58,7 +58,7 @@ async fn main() {
     };
 
     // Login with a bot token from the environment
-    let client = Client::builder(discord_token)
+    let mut client = Client::builder(discord_token)
         .event_handler(Handler {
             sender_bot: Bot::new(telegram_token),
             output_chat_id,
@@ -70,15 +70,10 @@ async fn main() {
             muted_users_ids: config.muted_users_ids,
             hide_usernames: config.hide_usernames,
         })
-        .await;
+        .await
+        .unwrap_or_else(|err| cmd.error(ErrorKind::InvalidValue, err).exit());
 
-    match client {
-        Ok(mut client) => {
-            // start listening for events by starting a single shard
-            if let Err(err) = client.start().await {
-                let _ = cmd.error(ErrorKind::InvalidValue, err).print();
-            }
-        }
-        Err(err) => cmd.error(ErrorKind::InvalidValue, err).exit(),
+    if let Err(err) = client.start().await {
+        let _ = cmd.error(ErrorKind::InvalidValue, err).print();
     }
 }
