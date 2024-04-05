@@ -46,7 +46,7 @@ pub fn parse_config(path: &PathBuf) -> anyhow::Result<Config> {
 
             hide_usernames: true,
         };
-        let yaml = serde_yaml::to_string(&js).unwrap();
+        let yaml = serde_yaml::to_string(&js)?;
 
         let parent = path.parent().ok_or(io::Error::new(
             io::ErrorKind::Other,

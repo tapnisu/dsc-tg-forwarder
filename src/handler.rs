@@ -51,7 +51,7 @@ impl EventHandler for Handler {
         self.sender_bot
             .send_message(
                 self.output_chat_id.to_owned(),
-                format_message(&ctx, &msg, self.hide_usernames).await,
+                format_message(&ctx, &msg, self.hide_usernames).await.unwrap(),
             )
             .parse_mode(ParseMode::MarkdownV2)
             .await

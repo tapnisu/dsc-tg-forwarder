@@ -1,5 +1,5 @@
 use serenity::{
-    model::prelude::{Embed, Guild, Message},
+    model::prelude::{Embed, Message},
     prelude::Context,
 };
 
@@ -28,7 +28,11 @@ impl EscapeMarkdownV2 for String {
     }
 }
 
-pub async fn format_message(ctx: &Context, msg: &Message, hide_username: bool) -> String {
+pub async fn format_message(
+    ctx: &Context,
+    msg: &Message,
+    hide_username: bool,
+) -> anyhow::Result<String> {
     let message_content = format!(
         "{}\n{}",
         msg.content_safe(ctx.to_owned().cache).escape_markdown_v2(),
@@ -36,32 +40,24 @@ pub async fn format_message(ctx: &Context, msg: &Message, hide_username: bool) -
     );
 
     if hide_username {
-        return message_content;
+        return Ok(message_content);
     }
 
-    let author_part = if msg.is_private() {
-        msg.author.tag().escape_markdown_v2()
-    } else {
-        format!(
+    let author_part = match (msg.guild(ctx.to_owned().cache), msg.is_private()) {
+        (Some(guild), true) => format!(
             "{} / {} / {}",
-            Guild::get(&ctx, msg.guild_id.unwrap())
-                .await
-                .unwrap()
-                .name
-                .escape_markdown_v2(),
+            guild.name.escape_markdown_v2(),
             &msg.channel_id
                 .to_channel(&ctx.http)
-                .await
-                .unwrap()
+                .await?
                 .guild()
-                .unwrap()
-                .name
-                .escape_markdown_v2(),
+                .map_or("".to_string(), |g| g.name.escape_markdown_v2()),
             msg.author.tag().escape_markdown_v2(),
-        )
+        ),
+        (_, _) => msg.author.tag().escape_markdown_v2(),
     };
 
-    format!("\\[{}\\]: {}", author_part, message_content)
+    Ok(format!("\\[{}\\]: {}", author_part, message_content))
 }
 
 pub fn format_embed(embed: &Embed) -> String {
