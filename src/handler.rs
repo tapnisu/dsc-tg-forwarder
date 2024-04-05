@@ -48,13 +48,24 @@ impl EventHandler for Handler {
             return;
         }
 
-        self.sender_bot
-            .send_message(
-                self.output_chat_id.to_owned(),
-                format_message(&ctx, &msg, self.hide_usernames).await.unwrap(),
-            )
-            .parse_mode(ParseMode::MarkdownV2)
-            .await
-            .unwrap();
+        if let Err(err) = send_message(self, &ctx, &msg).await {
+            println!("{}", err);
+        }
     }
+}
+
+async fn send_message(
+    handler: &Handler,
+    ctx: &Context,
+    msg: &Message,
+) -> anyhow::Result<teloxide::prelude::Message> {
+    let message = format_message(ctx, msg, handler.hide_usernames).await?;
+
+    let result = handler
+        .sender_bot
+        .send_message(handler.output_chat_id.to_owned(), message)
+        .parse_mode(ParseMode::MarkdownV2)
+        .await?;
+
+    Ok(result)
 }
