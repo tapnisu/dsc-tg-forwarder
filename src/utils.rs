@@ -35,7 +35,7 @@ pub async fn format_message(
 ) -> anyhow::Result<String> {
     let message_content = format!(
         "{}\n{}",
-        msg.content_safe(ctx.to_owned().cache).escape_markdown_v2(),
+        msg.content_safe(&ctx.cache).escape_markdown_v2(),
         msg.embeds.iter().map(format_embed).collect::<String>()
     );
 
@@ -43,7 +43,7 @@ pub async fn format_message(
         return Ok(message_content);
     }
 
-    let author_part = match (msg.guild(ctx.to_owned().cache), msg.is_private()) {
+    let author_part = match (msg.guild(&ctx.cache), msg.is_private()) {
         (Some(guild), true) => format!(
             "{} / {} / {}",
             guild.name.escape_markdown_v2(),
