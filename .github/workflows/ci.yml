@@ -9,9 +9,12 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      # Don't forget to update `Cargo.toml`
+      - name: Setup rust 1.74.0
+        run: rustup toolchain install 1.74.0 --profile minimal --no-self-update
       - name: Rust Cache
-        uses: Swatinem/rust-cache@v2.2.0
+        uses: Swatinem/rust-cache@v2
       - name: Build
         run: cargo build --verbose
       - name: Run tests

@@ -8,6 +8,9 @@ repository = "https://github.com/tapnisu/dsc-tg-forwarder/"
 description = "Selfbot to send your incoming Discord messages to Telegram"
 license = "MIT"
 
+# Don't forget to update `.github/workflows/test.yml`
+rust-version = "1.74"
+
 [dependencies]
 anyhow = "1.0"
 clap = { version = "4.5", features = ["derive"] }
