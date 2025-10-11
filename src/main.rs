@@ -1,6 +1,6 @@
 use clap::{error::ErrorKind, CommandFactory, Parser};
 use dsc_tg_forwarder::{cli::Cli, config, config::parse_config, handler::Handler};
-use serenity::prelude::*;
+use serenity_self::{all::GatewayIntents, Client};
 use teloxide::prelude::*;
 
 #[tokio::main]
@@ -21,8 +21,12 @@ async fn main() {
         config::get_tokens(&args.clone(), &config)
             .unwrap_or_else(|err| cmd.error(ErrorKind::InvalidValue, err).exit());
 
+    let intents = GatewayIntents::GUILD_MESSAGES
+        | GatewayIntents::DIRECT_MESSAGES
+        | GatewayIntents::MESSAGE_CONTENT;
+
     // Login with a bot token from the environment
-    let mut client = Client::builder(discord_token)
+    let mut client = Client::builder(discord_token, intents)
         .event_handler(Handler {
             sender_bot: Bot::new(telegram_token),
             output_chat_id,

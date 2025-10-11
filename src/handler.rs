@@ -1,7 +1,8 @@
 use crate::utils::format_message;
-use serenity::async_trait;
-use serenity::model::channel::Message;
-use serenity::prelude::*;
+
+use serenity_self::async_trait;
+use serenity_self::model::channel::Message;
+use serenity_self::prelude::*;
 use teloxide::prelude::*;
 use teloxide::types::ParseMode;
 
@@ -25,19 +26,20 @@ impl Handler {
     fn check_filters(&self, msg: &Message) -> bool {
         (!self
             .allowed_guilds_ids
-            .contains(&msg.guild_id.unwrap_or_default().0)
+            .contains(&msg.guild_id.unwrap_or_default().get())
             && !self.allowed_guilds_ids.is_empty())
             || (self
                 .muted_guilds_ids
-                .contains(&msg.guild_id.unwrap_or_default().0)
+                .contains(&msg.guild_id.unwrap_or_default().get())
                 && !self.muted_guilds_ids.is_empty())
-            || (!self.allowed_channels_ids.contains(&msg.channel_id.0)
+            || (!self.allowed_channels_ids.contains(&msg.channel_id.get())
                 && !self.allowed_channels_ids.is_empty())
-            || (self.muted_channels_ids.contains(&msg.channel_id.0)
+            || (self.muted_channels_ids.contains(&msg.channel_id.get())
                 && !self.muted_channels_ids.is_empty())
-            || (!self.allowed_users_ids.contains(&msg.author.id.0)
+            || (!self.allowed_users_ids.contains(&msg.author.id.get())
                 && !self.allowed_users_ids.is_empty())
-            || (self.muted_users_ids.contains(&msg.author.id.0) && !self.muted_users_ids.is_empty())
+            || (self.muted_users_ids.contains(&msg.author.id.get())
+                && !self.muted_users_ids.is_empty())
     }
 }
 

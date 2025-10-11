@@ -1,7 +1,4 @@
-use serenity::{
-    model::prelude::{Embed, Message},
-    prelude::Context,
-};
+use serenity_self::{model::prelude::*, prelude::*};
 
 pub trait EscapeMarkdownV2 {
     /// Escapes Telegrams Markdown V2 characters
@@ -43,18 +40,22 @@ pub async fn format_message(
         return Ok(message_content);
     }
 
-    let author_part = match (msg.guild(&ctx.cache), msg.is_private()) {
-        (Some(guild), true) => format!(
-            "{} / {} / {}",
-            guild.name.escape_markdown_v2(),
-            &msg.channel_id
-                .to_channel(&ctx.http)
-                .await?
-                .guild()
-                .map_or("".to_string(), |g| g.name.escape_markdown_v2()),
-            msg.author.tag().escape_markdown_v2(),
-        ),
-        (_, _) => msg.author.tag().escape_markdown_v2(),
+    let guild = msg
+        .guild_id
+        .and_then(|guild_id| ctx.cache.guild(guild_id).map(|g| g.to_owned()));
+    let channel_name = guild
+        .as_ref()
+        .and_then(|guild| guild.channels.get(&msg.channel_id).map(|g| g.to_owned()));
+    let author_part = match guild {
+        Some(guild) => {
+            format!(
+                "{} / {} / {}",
+                guild.name.escape_markdown_v2(),
+                channel_name.map_or(String::new(), |g| g.name.escape_markdown_v2()),
+                msg.author.tag().escape_markdown_v2(),
+            )
+        }
+        None => msg.author.tag().escape_markdown_v2(),
     };
 
     Ok(format!("\\[{}\\]: {}", author_part, message_content))
@@ -111,7 +112,10 @@ pub fn format_embed(embed: &Embed) -> String {
         .timestamp
         .to_owned()
         .map_or("".to_string(), |timestamp| {
-            format!("Timestamp: {}\n", timestamp.escape_markdown_v2())
+            format!(
+                "Timestamp: {}\n",
+                timestamp.to_string().escape_markdown_v2()
+            )
         });
 
     format!(

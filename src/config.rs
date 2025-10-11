@@ -52,10 +52,9 @@ pub fn parse_config(path: &PathBuf) -> anyhow::Result<Config> {
         };
         let yaml = serde_yaml_ng::to_string(&js)?;
 
-        let parent = path.parent().ok_or(io::Error::new(
-            io::ErrorKind::Other,
-            "Parent directory not found",
-        ))?;
+        let parent = path
+            .parent()
+            .ok_or(io::Error::other("Parent directory not found"))?;
         fs::create_dir_all(parent)?;
         File::create(path)?.write_all(yaml.as_bytes())?;
     }
