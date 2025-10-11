@@ -3,13 +3,13 @@ name = "dsc-tg-forwarder"
 version = "0.2.0"
 edition = "2021"
 readme = "README.md"
-authors = ["Aleksei Rybin <0xalekseirybin@gmail.com>"]
+authors = ["Aleksei Rybin <aleksei@tapni.su>"]
 repository = "https://github.com/tapnisu/dsc-tg-forwarder/"
 description = "Selfbot to send your incoming Discord messages to Telegram"
 license = "MIT"
 
 # Don't forget to update `.github/workflows/test.yml`
-rust-version = "1.74"
+rust-version = "1.81"
 
 [dependencies]
 anyhow = "1.0"
