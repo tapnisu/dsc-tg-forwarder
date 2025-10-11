@@ -50,7 +50,7 @@ pub fn parse_config(path: &PathBuf) -> anyhow::Result<Config> {
 
             hide_usernames: true,
         };
-        let yaml = serde_yaml::to_string(&js)?;
+        let yaml = serde_yaml_ng::to_string(&js)?;
 
         let parent = path.parent().ok_or(io::Error::new(
             io::ErrorKind::Other,
@@ -62,7 +62,7 @@ pub fn parse_config(path: &PathBuf) -> anyhow::Result<Config> {
 
     let yaml = fs::read_to_string(path)?;
 
-    let config = serde_yaml::from_str(&yaml)?;
+    let config = serde_yaml_ng::from_str(&yaml)?;
 
     Ok(config)
 }
