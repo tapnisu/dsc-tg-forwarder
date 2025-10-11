@@ -7,6 +7,10 @@ use std::fs::{self, File};
 use std::io::{self, Write};
 use std::path::PathBuf;
 
+fn default_false() -> bool {
+    true
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub discord_token: Option<String>,
@@ -28,7 +32,7 @@ pub struct Config {
     #[serde(default)]
     pub muted_users_ids: Vec<u64>,
 
-    #[serde(default)]
+    #[serde(default = "default_false")]
     pub hide_usernames: bool,
 }
 
